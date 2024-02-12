@@ -34,8 +34,15 @@ MongoClient.connect('mongodb+srv://ak2650:uni123@cluster0.rthvzm3.mongodb.net', 
         db = client.db('afterschool');
 
         // Root path to show that API is working
-        app.get('/', (req, res) => {
-            res.send('Select a collection, e.g., /collection/lessons');
+        // Root path to display all lessons
+        app.get('/', async (req, res) => {
+            try {
+                const lessons = await db.collection('lessons').find({}).toArray();
+                res.json(lessons);
+            } catch (error) {
+                console.error('Error fetching lessons:', error);
+                res.status(500).json({ message: 'Internal server error' });
+            }
         });
 
         // GET route to fetch all lessons
